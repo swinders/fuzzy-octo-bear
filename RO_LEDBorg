@@ -1,0 +1,38 @@
+REM > LEDBorg
+REM Control LEDBorg on Raspberry Pi from RISC OS
+REM Needs GPIO module loaded
+REM Stephen Swindley 10/02/2013
+REM dedicated to Grandad who would have been 91 today
+REM (Alfred James Brook 10-02-1922 to 05-02-2013)
+SYS "GPIO_GetBoard" TO type%,string%
+type$="Unknown"
+IF type%=11 THEN type$="Raspberry Pi B Rev1"
+IF type%=12 THEN type$="Raspberry Pi B Rev2"
+PRINT type$
+red%=17
+green%=21
+blue%=22
+SYS "GPIO_WriteMode" ,red%,1
+SYS "GPIO_WriteMode" ,green%,1
+SYS "GPIO_WriteMode" ,blue%,1
+SYS "GPIO_WriteData" ,red%,0
+SYS "GPIO_WriteData" ,green%,0
+SYS "GPIO_WriteData" , blue%,0
+INPUT "Red",r%
+INPUT "Green",g%
+INPUT "Blue",b%
+x%=0
+REPEAT
+IF x% AND 1 THEN R%=1 ELSE R%=0
+IF x% AND 2 THEN G%=1 ELSE G%=0
+IF x% AND 4 THEN B%=1 ELSE B%=0
+IF r%=1 THEN SYS "GPIO_WriteData" , red%,R%
+IF g%=1 THEN SYS "GPIO_WriteData" , green%,G%
+IF b%=1 THEN SYS "GPIO_WriteData" , blue%,B%
+FOR i=0 TO 10000
+REM NEXT i
+PRINT TAB(0,10);x%,R%,G%,B%
+NEXT i
+x%+=1
+IF x%>7 THEN x%=0
+UNTIL FALSE
